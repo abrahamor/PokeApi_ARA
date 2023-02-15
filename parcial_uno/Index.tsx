@@ -1,54 +1,38 @@
 import React from 'react'
-import { View, Text, StyleSheet,TextInput,AppRegistry} from 'react-native'
-import { useEffect, useState,Component} from 'react';
+import { View, Text, StyleSheet,TextInput,Image} from 'react-native'
+import { useEffect, useState} from 'react';
 import { reqApi} from './Import';
 // import Input from './component';
-// ,wait2SecondsAsync 
+
 
 function Index() {
-  // const nose = Input.poke
-  // console.log(nose)
+ 
   const [ability,setAbility] = useState("");
   const [name,setName] = useState("");
+  const [image,setImage] = useState("");
   const [value, setValue] = useState("");
 
   const waitPlease = async (input_pokemon) =>{
-    // console.log(nombreIntroducido)
-    const pokemon:string = input_pokemon
-    const pokemon_lowercase:string = pokemon.toLowerCase()
+    const pokemon:string = input_pokemon //se consigue el texto del input
+    const pokemon_lowercase:string = pokemon.toLowerCase() //se normaliza el texto para que no cause errores(minusculas)
 
-    // try{ 
-    //   const result = await wait2SecondsAsync(input_pokemon);
-    //   setTest(`then: ${result}`);
-    // }catch(error){
-    //   setTest(`catch: ${error}`)
-    // }
+ 
     try{
-      //  const {data} = await reqApi.get(pokemon_lowercase);
-      //  const {} = data 
+      
+      const {data} = await reqApi.get(pokemon_lowercase); //se hace la llamada a la api
+      const {abilities} = data; //se agarra la propiedad abilities del objeto data
+      const {name} = data; //se agarra la propiedad name del objeto data
+      const {sprites:{front_default:imagen}} = data; //se agarra la sprites y de ahi la imagen abilities del objeto data
 
-      const {data:{abilities:user2}} = await reqApi.get(pokemon_lowercase);
-      const {data:{name:nombre}} = await reqApi.get(pokemon_lowercase);
-      // var {} = user2 //1:{ability:{name:nombre2}}
-      // const len = user2.length;
-      // const num:number = 1;
-      var abilities:string = "";
+      var habilidades:string = ""; //se crea string vacio para anexar las habilidades
 
-      user2.forEach(element => {
-        abilities += element.ability.name+" ";
-      //  console.log(element.ability.name)
-      });
-      // for (let index:number = 0; index < len; index++) {
-      //  const {1:{ability:{name:nombre2}}} = user2 
-      //   console.log(nombre2)
-      // }
-      // for (let index = 0; index < len; index++) {
-      //   var {data:{abilities:{1:{ability:{name:nombre2}}}}} = await reqApi.get("/pokemon/bulbasaur");
-      //   console.log(nombre2)
-      // }
-      var string = abilities.split('"').pop
-      setName("Pokemon: "+nombre);
-      setAbility("Habilidades: "+abilities);
+      abilities.forEach(element => {
+        habilidades += element.ability.name+" ";
+      });//se recorre el arreglo de abilites para anexarlas en un string
+
+      setImage(imagen); //se le asigna la imagen a la variable image
+      setName("Nombre del Pokemon: "+name); //se le asigna el nombre a la variable name
+      setAbility("Habilidades: "+habilidades); //se le asigna el string de habilidades a la variable abilty
       
     }catch({message}){
       setName(message);
@@ -56,10 +40,7 @@ function Index() {
     }  
     
   }
-  useEffect(()=>{
-    waitPlease(true);
-  },[])
-  {/*{JSON.stringify(ability, null, 2)} */}
+  
 return (
   
     <View>
@@ -70,6 +51,8 @@ return (
           onSubmitEditing={(event) => waitPlease(event.nativeEvent.text)}
           onChangeText={setValue}
         />
+
+        <Image style={{ width: 300, height: 300 }} source={{ uri: `${image}` }}></Image>
         <Text style={styles.text}>{name}</Text>
         <Text style={styles.text}>{ability}</Text>  
     </View>
