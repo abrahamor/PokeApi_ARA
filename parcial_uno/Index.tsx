@@ -27,19 +27,11 @@ function Index(this: any) {
         setType("");
         setAbility(""); 
       }else{
-<<<<<<< HEAD
         const {data}:any = await reqApi.get("pokemon/"+pokemon_lowercase); //se hace la llamada a la api para la info del pokemon
         const {data:data2}:any  = await reqApi.get("pokemon-species/"+pokemon_lowercase); //se hace la llamada a la api para la info del pokemon
         const {flavor_text_entries}:any  = data2
         
         const get_descripcion = flavor_text_entries.find((element: { language: { name: string; }; }) => element.language.name == "es")
-=======
-        const {data} = await reqApi.get("pokemon/"+pokemon_lowercase); //se hace la llamada a la api para la info del pokemon
-        const {data:data2} = await reqApi.get("pokemon-species/"+pokemon_lowercase); //se hace la llamada a la api para la info del pokemon
-
-        const {flavor_text_entries} = data2
-        var get_descripcion = flavor_text_entries.find((element: { language: { name: string; }; }) => element.language.name == "es")
->>>>>>> f7c19baa96c9eac5b6a478a56ea34f79264574da
 
 
         // flavor_text_entries.forEach(element => {
@@ -104,11 +96,7 @@ return (
         />
 
         <Image style={styles.image} source={{uri: image ? image :  "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Pok%C3%A9_Ball_icon.svg/770px-Pok%C3%A9_Ball_icon.svg.png"}}></Image>
-<<<<<<< HEAD
         <Text style={styles.text}>{name ? name : "Bienvenido a la aplicación"}</Text>
-=======
-        <Text style={styles.text}>{name}</Text>
->>>>>>> f7c19baa96c9eac5b6a478a56ea34f79264574da
         <Text style={styles.text}>{description}</Text>
         <Text style={styles.text}>{type}</Text>
         <Text style={styles.text}>{ability}</Text>  
