@@ -5,7 +5,9 @@ import { reqApi} from './Import';
 // import Input from './component';
 import Modal from "react-native-modal";
 
-
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 
 
@@ -19,6 +21,7 @@ function Index(this: any) {
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
   const [homeScreen, setHome] = useState(true);
+  const [loading, setLoading] = useState(false);
  
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const [isModalVisible2, setIsModalVisible2] = React.useState(false);
@@ -41,10 +44,14 @@ function Index(this: any) {
         setAbility("");
         setHome(true)
       }else{
+        setLoading(true)
+        setHome(true)
         const {data}:any = await reqApi.get("pokemon/"+pokemon_lowercase); //se hace la llamada a la api para la info del pokemon
         const {data:data2}:any  = await reqApi.get("pokemon-species/"+pokemon_lowercase); //se hace la llamada a la api para la info del pokemon
         const {flavor_text_entries}  = data2
         const get_descripcion = flavor_text_entries.find((element: { language: { name: string; }; }) => element.language.name == "es")
+        await sleep(1000);
+        setLoading(false);
         setHome(false)
 
         const {flavor_text:descripcion} = get_descripcion;
@@ -98,6 +105,7 @@ function Index(this: any) {
     }catch(message:any){
       setName(message);
       setAbility(message);
+      setLoading(false);
     }  
    
   }
@@ -114,11 +122,12 @@ return (
           onChangeText={value=> setValue(value)}
           value={value}
         />        
-        <Image style={styles.image} source={{uri: image ? image :  "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Pok%C3%A9_Ball_icon.svg/770px-Pok%C3%A9_Ball_icon.svg.png"}}></Image>
-        <Text style={styles.text}>{name ? name : "Bienvenido a la aplicación"}</Text>
-        <Text style={styles.text}>{description}</Text>
-        <Text style={styles.text}>{type}</Text>
-        <Text style={styles.text}>{ability}</Text> 
+        <Image style={loading ? styles.image_load : styles.none} source={{uri: loading ?  "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/029b8bd9-cb5a-41e4-9c7e-ee516face9bb/dayo3ow-7ac86c31-8b2b-4810-89f2-e6134caf1f2d.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzAyOWI4YmQ5LWNiNWEtNDFlNC05YzdlLWVlNTE2ZmFjZTliYlwvZGF5bzNvdy03YWM4NmMzMS04YjJiLTQ4MTAtODlmMi1lNjEzNGNhZjFmMmQuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.ooubhxjHp9PIMhVxvCFHziI6pxDAS8glXPWenUeomWs" :" " }}></Image>
+        <Image style={loading ? styles.none : styles.image} source={{uri: image ? image :  "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Pok%C3%A9_Ball_icon.svg/770px-Pok%C3%A9_Ball_icon.svg.png"}}></Image>
+        <Text style={loading ? styles.none : styles.text}>{name ? name : "Bienvenido a la aplicación"}</Text>
+        <Text style={loading ? styles.none : styles.text}>{description}</Text>
+        <Text style={loading ? styles.none : styles.text}>{type}</Text>
+        <Text style={loading ? styles.none : styles.text}>{ability}</Text>
 
         <View style={{ flexDirection:"row",justifyContent:'space-between'}}>
           <Pressable style= {homeScreen ?  styles.none : styles.button } onPress={handleModal}>
