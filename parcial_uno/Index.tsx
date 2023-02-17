@@ -13,10 +13,10 @@ function Index(this: any) {
   const [value, setValue] = useState("");
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
-  
+
   const waitPlease = async (input_pokemon:string) =>{
-  const pokemon:string = input_pokemon //se consigue el texto del input
-  const pokemon_lowercase:string = pokemon.toLowerCase().trim() //se normaliza el texto para que no cause errores(minusculas)
+    const pokemon:string = input_pokemon //se consigue el texto del input
+    const pokemon_lowercase:string = pokemon.toLowerCase().trim() //se normaliza el texto para que no cause errores(minusculas)
 
     
     try{
@@ -30,7 +30,6 @@ function Index(this: any) {
         const {data}:any = await reqApi.get("pokemon/"+pokemon_lowercase); //se hace la llamada a la api para la info del pokemon
         const {data:data2}:any  = await reqApi.get("pokemon-species/"+pokemon_lowercase); //se hace la llamada a la api para la info del pokemon
         const {flavor_text_entries}:any  = data2
-        
         const get_descripcion = flavor_text_entries.find((element: { language: { name: string; }; }) => element.language.name == "es")
 
 
@@ -57,7 +56,11 @@ function Index(this: any) {
             const {names} = data3
             var get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
             tipo += get_type.name +","
-            setType("Tipo: "+tipo.slice(0,-1));//se le asigna el string de tipo a la variable tipo 
+            var len_tipo = tipo.split(',')
+
+            if(len_tipo.length-1 == types.length){
+              setType("Tipo: "+tipo.slice(0,-1));//se le asigna el string de tipo a la variable tipo 
+            }
         })
         
 
@@ -68,7 +71,10 @@ function Index(this: any) {
             const {names} = data3
             var get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
             habilidades += get_type.name+",";
-            setAbility("Habilidades: "+habilidades.slice(0,-1)); //se le asigna el string de habilidades a la variable abilty 
+            var len_habilidades = habilidades.split(',')
+            if(len_habilidades.length-1 == abilities.length){
+              setAbility("Habilidades: "+habilidades.slice(0,-1)); //se le asigna el string de habilidades a la variable abilty 
+            }
 
         });//se recorre el arreglo de abilites para anexarlas en un string
 
@@ -94,7 +100,6 @@ return (
           value={value}
 
         />
-
         <Image style={styles.image} source={{uri: image ? image :  "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Pok%C3%A9_Ball_icon.svg/770px-Pok%C3%A9_Ball_icon.svg.png"}}></Image>
         <Text style={styles.text}>{name ? name : "Bienvenido a la aplicación"}</Text>
         <Text style={styles.text}>{description}</Text>
@@ -105,11 +110,13 @@ return (
 }
 
 const styles = StyleSheet.create({
+  
   image:{
     width:250,
     height:250,
     alignSelf:'center'
   },
+  
   text:{
     color:'black',
     fontSize:20,
