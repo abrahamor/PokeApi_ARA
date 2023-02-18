@@ -122,7 +122,7 @@ return (
           onChangeText={value=> setValue(value)}
           value={value}
         />        
-        <Image style={loading ? styles.image_load : styles.none} source={{uri: loading ?  "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/029b8bd9-cb5a-41e4-9c7e-ee516face9bb/dayo3ow-7ac86c31-8b2b-4810-89f2-e6134caf1f2d.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzAyOWI4YmQ5LWNiNWEtNDFlNC05YzdlLWVlNTE2ZmFjZTliYlwvZGF5bzNvdy03YWM4NmMzMS04YjJiLTQ4MTAtODlmMi1lNjEzNGNhZjFmMmQuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.ooubhxjHp9PIMhVxvCFHziI6pxDAS8glXPWenUeomWs" :" " }}></Image>
+        <Image style={loading ? styles.image_load : styles.none} source={{uri: loading ?  "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/029b8bd9-cb5a-41e4-9c7e-ee516face9bb/dayo3ow-7ac86c31-8b2b-4810-89f2-e6134caf1f2d.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzAyOWI4YmQ5LWNiNWEtNDFlNC05YzdlLWVlNTE2ZmFjZTliYlwvZGF5bzNvdy03YWM4NmMzMS04YjJiLTQ4MTAtODlmMi1lNjEzNGNhZjFmMmQuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.ooubhxjHp9PIMhVxvCFHziI6pxDAS8glXPWenUeomWs" :"placeholder.placeholder" }}></Image>
         <Image style={loading ? styles.none : styles.image} source={{uri: image ? image :  "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Pok%C3%A9_Ball_icon.svg/770px-Pok%C3%A9_Ball_icon.svg.png"}}></Image>
         <Text style={loading ? styles.none : styles.text}>{name ? name : "Bienvenido a la aplicación"}</Text>
         <Text style={loading ? styles.none : styles.text}>{description}</Text>
@@ -146,27 +146,27 @@ return (
          
 
 
-        <Modal isVisible={isModalVisible}>
-          <View style={{ flex: 1,backgroundColor:'white' }}>
-            <Text>Inserte cadena de evolucion</Text>
+        <Modal style={styles.modal} isVisible={isModalVisible}>
+          <View style={styles.modal_view}>
+            <Text style={{marginBottom:80}}>Inserte cadena de evolucion</Text>
             <Pressable style= {styles.button} onPress={handleModal}>
               <Text style={styles.text_button}>Cerrar</Text>
             </Pressable>
           </View>
         </Modal>
 
-        <Modal isVisible={isModalVisible2}>
-          <View style={{ flex: 1,backgroundColor:'white' }}>
-            <Text>Inserte Movimientos</Text>
+        <Modal style={styles.modal} isVisible={isModalVisible2}>
+          <View style={styles.modal_view}>
+            <Text style={{marginBottom:80}}>Inserte Movimientos</Text>
             <Pressable style= {styles.button} onPress={handleModal2}>
               <Text style={styles.text_button}>Cerrar</Text>
             </Pressable>
           </View>
         </Modal>
         
-        <Modal isVisible={isModalVisible3}>
-          <View style={{ flex: 1,backgroundColor:'white' }}>
-            <Text>Inserte Tipos de ataque</Text>
+        <Modal style={styles.modal} isVisible={isModalVisible3}>
+          <View style={styles.modal_view}>
+            <Text style={{marginBottom:80}}>Inserte Tipos de ataque</Text>
             <Pressable style= {styles.button} onPress={handleModal3}>
               <Text style={styles.text_button}>Cerrar</Text>
             </Pressable>
@@ -184,6 +184,26 @@ const styles = StyleSheet.create({
   none:{
     display:'none'
   },
+  modal:{
+    marginTop:300,
+    alignContent:'center',
+    maxHeight:200,
+    justifyContent: 'center',
+    alignItems: 'center',
+ 
+
+  },
+  modal_view:{
+    flex: 2, 
+    justifyContent: "center", 
+    alignItems: "center", 
+    backgroundColor:'white',
+    alignSelf:'center',
+    borderRadius: 6,
+    height:200,
+    width:200,
+
+  },
   button: {
     marginTop:10,
     alignItems: 'center',
@@ -194,6 +214,9 @@ const styles = StyleSheet.create({
   },
   text_button: {
     fontSize: 16,
+    alignItems: 'center',
+    textAlign:'center',
+    justifyContent: 'center',
     lineHeight: 21,
     fontWeight: 'bold',
     width:75,
