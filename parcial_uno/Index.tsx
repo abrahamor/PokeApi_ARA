@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet,TextInput,Image,Alert, Button, Pressable} from 'react-native'
+import { View, Text, StyleSheet,TextInput,Image,Alert, ScrollView, Button, Pressable} from 'react-native'
 import { useEffect, useState} from 'react';
 import { reqApi} from './Import';
 // import Input from './component';
@@ -9,9 +9,6 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-
-
-
 function Index(this: any) {
  
   const [ability,setAbility] = useState("");
@@ -19,6 +16,7 @@ function Index(this: any) {
   const [image,setImage] = useState("");
   const [value, setValue] = useState("");
   const [type, setType] = useState("");
+  const [move, setMoves] = useState("");
   const [description, setDescription] = useState("");
   const [homeScreen, setHome] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -41,6 +39,7 @@ function Index(this: any) {
         setImage("");
         setDescription("")
         setType("");
+        setMoves("");
         setAbility("");
         setHome(true)
       }else{
@@ -55,11 +54,11 @@ function Index(this: any) {
         setHome(false)
 
         const {flavor_text:descripcion} = get_descripcion;
-        const {name,abilities,sprites:{front_default:imagen},types} = data; //se agarra la propiedades del objeto data
+        const {name,abilities,moves,sprites:{front_default:imagen},types} = data; //se agarra la propiedades del objeto data
 
         var habilidades:string = "";
         var tipo:string = "";
-
+        var movimientos:string = "";
 
         types.forEach(async(element: { type: { url: string; }; }) =>{
             const {type:{url}} = element;
@@ -95,8 +94,24 @@ function Index(this: any) {
             }
         });//se recorre el arreglo de abilites para anexarlas en un string
 
+        moves.forEach( async(element: { move: { url: string; }; }) => {
+          const {move:{url}} = element;
+     
+          const newurl:any = url.split('v2/').pop()
+          const {data:data3} = await reqApi.get(newurl);
+          const {names} = data3
+          const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
+         
+          const {name} = get_type
+          movimientos += `${name}, `;
+          const len_moves = movimientos.split(',')
 
+          // setMoves("Moves:" + movimientos);
+          if(len_moves.length-1 == abilities.length){
+            setMoves(movimientos.slice(0,-2)); //se le asigna el string de movimientos a la variable abilty
+          }
 
+      });//se recorre el arreglo de abilites para anexarlas en un string
 
         setImage(imagen); //se le asigna la imagen a la variable image
         setDescription("Descripcion: "+descripcion)
@@ -105,6 +120,7 @@ function Index(this: any) {
     }catch(message:any){
       setName(message);
       setAbility(message);
+      setMoves(message);
       setLoading(false);
     }  
    
@@ -145,7 +161,6 @@ return (
         </View>
          
 
-
         <Modal style={styles.modal} isVisible={isModalVisible}>
           <View style={styles.modal_view}>
             <Text style={{marginBottom:80}}>Inserte cadena de evolucion</Text>
@@ -155,9 +170,12 @@ return (
           </View>
         </Modal>
 
+
         <Modal style={styles.modal} isVisible={isModalVisible2}>
           <View style={styles.modal_view}>
-            <Text style={{marginBottom:80}}>Inserte Movimientos</Text>
+          <ScrollView>
+            <Text style={{marginBottom:80}}>{move}</Text>
+            </ScrollView>
             <Pressable style= {styles.button} onPress={handleModal2}>
               <Text style={styles.text_button}>Cerrar</Text>
             </Pressable>
