@@ -13,10 +13,18 @@ function Index(this: any) {
  
   const [ability,setAbility] = useState("");
   const [name,setName] = useState("");
+  //const [id, setId] = useState("");
   const [image,setImage] = useState("");
+  const [doubleDamageFrom, setDoubleDamageFrom] = useState("");
+  const [doubleDamageTo, setDoubleDamageTo] = useState("");
+  const [halfDamageFrom, setHalfDamageFrom] = useState("");
+  const [halfDamageTo, setHalfDamageTo] = useState("");
+  const [noDamageFrom, setNoDamageFrom] = useState("");
+  const [noDamageTo, setNoDamageTo] = useState("");
   const [value, setValue] = useState("");
   const [type, setType] = useState("");
   const [move, setMoves] = useState("");
+  const [evolution, setEvolutions] = useState("");
   const [description, setDescription] = useState("");
   const [homeScreen, setHome] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -38,6 +46,12 @@ function Index(this: any) {
         setName("No puede dejar el campo vacio")
         setImage("");
         setDescription("")
+        setDoubleDamageFrom("")
+        setDoubleDamageTo("")
+        setHalfDamageFrom("")
+        setHalfDamageTo("")
+        setNoDamageFrom("")
+        setNoDamageTo("")
         setType("");
         setMoves("");
         setAbility("");
@@ -46,8 +60,11 @@ function Index(this: any) {
         setLoading(true)
         setHome(true)
         const {data}:any = await reqApi.get("pokemon/"+pokemon_lowercase); //se hace la llamada a la api para la info del pokemon
+        //const {id} = data
         const {data:data2}:any  = await reqApi.get("pokemon-species/"+pokemon_lowercase); //se hace la llamada a la api para la info del pokemon
+        //const {data:data4}:any = await reqApi.get("evolution-chain/"+id);
         const {flavor_text_entries}  = data2
+        const {evolution_chain} = data2;
         const get_descripcion = flavor_text_entries.find((element: { language: { name: string; }; }) => element.language.name == "es")
         await sleep(1000);
         setLoading(false);
@@ -55,10 +72,18 @@ function Index(this: any) {
 
         const {flavor_text:descripcion} = get_descripcion;
         const {name,abilities,moves,sprites:{front_default:imagen},types} = data; //se agarra la propiedades del objeto data
+        //const {chain} = data4;
 
         var habilidades:string = "";
         var tipo:string = "";
         var movimientos:string = "";
+        var evoluciones:string = "";
+        var doubleDamageFromString: string = "";
+        var doubleDamageToString: string = "";
+        var halfDamageFromString: string = "";
+        var halfDamageToString: string = "";
+        var noDamageFromString: string = "";
+        var noDamageToString: string = "";
 
         types.forEach(async(element: { type: { url: string; }; }) =>{
             const {type:{url}} = element;
@@ -66,6 +91,105 @@ function Index(this: any) {
             var newurl:any = url.split('v2/').pop()
             const {data:data3} = await reqApi.get(newurl);
             const {names} = data3
+            const {damage_relations: {double_damage_from}} = data3
+            const {damage_relations: {double_damage_to}} = data3
+            const {damage_relations: {half_damage_from}} = data3
+            const {damage_relations: {half_damage_to}} = data3
+            const {damage_relations: {no_damage_from}} = data3
+            const {damage_relations: {no_damage_to}} = data3
+
+            const get_doubleDamageFromType = double_damage_from.map(({ url }) => url);
+            const get_doubleDamageToType = double_damage_to.map(({ url }) => url);
+            const get_halfDamageFromType = half_damage_from.map(({ url }) => url);
+            const get_halfDamageToType = half_damage_to.map(({ url }) => url);
+            const get_noDamageFromType = no_damage_from.map(({ url }) => url);
+            const get_noDamageToType = no_damage_to.map(({ url }) => url);
+
+
+            get_doubleDamageFromType.forEach(async(element: { type: {url: string;};}) =>{
+              const {type:{url}} = element;
+              var newurl:any = url.split('v2/').pop()
+              const {data:data3} = await reqApi.get(newurl);
+              const {names} = data3
+              const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
+              const {name} = get_type
+              doubleDamageFromString += `${name}, `
+              const len_tipo = doubleDamageFromString.split(',')
+              if(len_tipo.length-1 == get_doubleDamageFromType.length){
+                setDoubleDamageFrom("Tipos que le hacen 2x de daño: "+doubleDamageFromString.slice(0,-2));//se le asigna el string de tipo a la variable tipo
+              }
+            })
+
+            get_doubleDamageToType.forEach(async(element: { type: {url: string;};}) =>{
+              const {type:{url}} = element;
+              var newurl:any = url.split('v2/').pop()
+              const {data:data3} = await reqApi.get(newurl);
+              const {names} = data3
+              const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
+              const {name} = get_type
+              doubleDamageToString += `${name}, `
+              const len_tipo = doubleDamageToString.split(',')
+              if(len_tipo.length-1 == get_doubleDamageToType.length){
+                setDoubleDamageTo("Tipos a los que hace 2x de daño: "+doubleDamageToString.slice(0,-2));//se le asigna el string de tipo a la variable tipo
+              }
+            })
+
+            get_halfDamageFromType.forEach(async(element: { type: {url: string;};}) =>{
+              const {type:{url}} = element;
+              var newurl:any = url.split('v2/').pop()
+              const {data:data3} = await reqApi.get(newurl);
+              const {names} = data3
+              const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
+              const {name} = get_type
+              halfDamageFromString += `${name}, `
+              const len_tipo = halfDamageFromString.split(',')
+              if(len_tipo.length-1 == get_halfDamageFromType.length){
+                setHalfDamageFrom("Tipos que le hacen 0.5x de daño: "+halfDamageFromString.slice(0,-2));//se le asigna el string de tipo a la variable tipo
+              }
+            })
+
+            get_halfDamageToType.forEach(async(element: { type: {url: string;};}) =>{
+              const {type:{url}} = element;
+              var newurl:any = url.split('v2/').pop()
+              const {data:data3} = await reqApi.get(newurl);
+              const {names} = data3
+              const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
+              const {name} = get_type
+              halfDamageToString += `${name}, `
+              const len_tipo = halfDamageToString.split(',')
+              if(len_tipo.length-1 == get_halfDamageToType.length){
+                setHalfDamageTo("Tipos a los que hace 0.5x de daño: "+halfDamageToString.slice(0,-2));//se le asigna el string de tipo a la variable tipo
+              }
+            })
+
+            get_noDamageFromType.forEach(async(element: { type: {url: string;};}) =>{
+              const {type:{url}} = element;
+              var newurl:any = url.split('v2/').pop()
+              const {data:data3} = await reqApi.get(newurl);
+              const {names} = data3
+              const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
+              const {name} = get_type
+              noDamageFromString += `${name}, `
+              const len_tipo = noDamageFromString.split(',')
+              if(len_tipo.length-1 == get_noDamageFromType.length){
+                setNoDamageFrom("Tipos que no le hacen daño: "+noDamageFromString.slice(0,-2));//se le asigna el string de tipo a la variable tipo
+              }
+            })
+
+            get_noDamageToType.forEach(async(element: { type: {url: string;};}) =>{
+              const {type:{url}} = element;
+              var newurl:any = url.split('v2/').pop()
+              const {data:data3} = await reqApi.get(newurl);
+              const {names} = data3
+              const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
+              const {name} = get_type
+              noDamageToString += `${name}, `
+              const len_tipo = noDamageToString.split(',')
+              if(len_tipo.length-1 == get_noDamageToType.length){
+                setNoDamageTo("Tipos a los que no le hace daño: "+noDamageToString.slice(0,-2));//se le asigna el string de tipo a la variable tipo
+              }
+            })
+
             const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
             
             const {name} = get_type
@@ -76,7 +200,27 @@ function Index(this: any) {
               setType("Tipo: "+tipo.slice(0,-2));//se le asigna el string de tipo a la variable tipo
             }
         })
-     
+        /*
+        evolution_chain.forEach(async(element: { evolution: { url: string; }; }) =>{
+          const {evolution:{url}} = element;
+
+          var newurl:any = url.split('v2/').pop()
+          const {data:data3} = await reqApi.get(newurl);
+          //const {data:data4}:any = await reqApi.get("evolution-chain/"+id);
+          //const {names} = data3
+          //const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
+
+          const {chain} = data3
+          const test = Object.keys(chain).map((key) => chain[key]);
+          
+          evoluciones += `${test}}, `
+          const len_evoluciones = evoluciones.split(',')
+
+          if(len_evoluciones.length-1 == evolution_chain.length){
+            setEvolutions("Evoluciona a: "+evoluciones.slice(0,-2));//se le asigna el string de tipo a la variable evoluciones
+          }
+      }); 
+      */
         abilities.forEach( async(element: { ability: { url: string; }; }) => {
             const {ability:{url}} = element;
        
@@ -107,9 +251,10 @@ function Index(this: any) {
           const len_moves = movimientos.split(',')
 
           // setMoves("Moves:" + movimientos);
-          if(len_moves.length-1 == abilities.length){
+          if(len_moves.length-1 == moves.length){
             setMoves(movimientos.slice(0,-2)); //se le asigna el string de movimientos a la variable abilty
           }
+          //console.log(movimientos);
 
       });//se recorre el arreglo de abilites para anexarlas en un string
 
@@ -121,6 +266,7 @@ function Index(this: any) {
       setName(message);
       setAbility(message);
       setMoves(message);
+      //setEvolutions(message);
       setLoading(false);
     }  
    
@@ -163,7 +309,7 @@ return (
 
         <Modal style={styles.modal} isVisible={isModalVisible}>
           <View style={styles.modal_view}>
-            <Text style={{marginBottom:80}}>Inserte cadena de evolucion</Text>
+            <Text style={{marginBottom:80}}>{evolution}</Text>
             <Pressable style= {styles.button} onPress={handleModal}>
               <Text style={styles.text_button}>Cerrar</Text>
             </Pressable>
@@ -184,7 +330,12 @@ return (
         
         <Modal style={styles.modal} isVisible={isModalVisible3}>
           <View style={styles.modal_view}>
-            <Text style={{marginBottom:80}}>Inserte Tipos de ataque</Text>
+            <Text style={{marginBottom:80}}>{doubleDamageFrom}</Text>
+            <Text style={{marginBottom:80}}>{doubleDamageTo}</Text>
+            <Text style={{marginBottom:80}}>{halfDamageFrom}</Text>
+            <Text style={{marginBottom:80}}>{halfDamageTo}</Text>
+            <Text style={{marginBottom:80}}>{noDamageFrom}</Text>
+            <Text style={{marginBottom:80}}>{noDamageTo}</Text>
             <Pressable style= {styles.button} onPress={handleModal3}>
               <Text style={styles.text_button}>Cerrar</Text>
             </Pressable>
