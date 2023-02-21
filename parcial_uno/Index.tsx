@@ -242,20 +242,24 @@ function Index(this: any) {
           const {move:{url}} = element;
      
           const newurl:any = url.split('v2/').pop()
-          const {data:data3} = await reqApi.get(newurl);
-          const {names} = data3
-          const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
-         
-          const {name} = get_type
-          movimientos += `${name}, `;
-          const len_moves = movimientos.split(',')
+          const {data:data4} = await reqApi.get(newurl);
+          const {names} = data4
 
-          // setMoves("Moves:" + movimientos);
-          if(len_moves.length-1 == moves.length){
-            setMoves(movimientos.slice(0,-2)); //se le asigna el string de movimientos a la variable abilty
+          let get_mov = names.find((element) =>{ return element.language.name === "es"})
+          if (get_mov !== undefined) {
+            const {name} = get_mov
+            movimientos += `${name}, `;
+            let len_moves = movimientos.split(',');
+            if(len_moves.length == moves.length){
+              setMoves(movimientos.slice(0,-2)); //se le asigna el string de movimientos a la variable abilty
+            }
+          }else{
+            get_mov = ""
+            let len_moves = movimientos.split(',');
+             if(len_moves.length == moves.length){
+              setMoves(movimientos.slice(0,-2)); //se le asigna el string de movimientos a la variable abilty
+            }
           }
-          //console.log(movimientos);
-
       });//se recorre el arreglo de abilites para anexarlas en un string
 
         setImage(imagen); //se le asigna la imagen a la variable image
