@@ -96,6 +96,7 @@ function Index(this: any) {
         var habilidades:string = "";
         var tipo:string = "";
         var movimientos:string = "";
+        var auxMov: string = "";
         var tipoFirstEvol:string = "";
         var tipoSecondEvol:string = "";
         var tipoThirdEvol:string = "";
@@ -346,7 +347,7 @@ function Index(this: any) {
 
         moves.forEach( async(element: { move: { url: string; }; }) => {
           const {move:{url}} = element;
-     
+    
           const newurl:any = url.split('v2/').pop()
           const {data:data4} = await reqApi.get(newurl);
           const {names} = data4
@@ -354,15 +355,19 @@ function Index(this: any) {
           let get_mov = names.find((element) =>{ return element.language.name === "es"})
           if (get_mov !== undefined) {
             const {name} = get_mov
-            movimientos += `${name}, `;
-            let len_moves = movimientos.split(',');
+            auxMov += `${name}, `;
+            let len_moves = auxMov.split(',');
+            len_moves.sort();
             if(len_moves.length == moves.length){
+              movimientos += `${len_moves}`
               setMoves(movimientos.slice(0,-2)); //se le asigna el string de movimientos a la variable abilty
             }
           }else{
             get_mov = ""
-            let len_moves = movimientos.split(',');
+            let len_moves = auxMov.split(',');
+            len_moves.sort();
              if(len_moves.length == moves.length){
+              movimientos += `${len_moves}`;
               setMoves(movimientos.slice(0,-2)); //se le asigna el string de movimientos a la variable abilty
             }
           }
