@@ -358,17 +358,21 @@ function Index(this: any) {
             auxMov += `${name}, `;
             let len_moves = auxMov.split(',');
             len_moves.sort();
+            len_moves[0] = len_moves[len_moves.length -1];
+            len_moves.pop();
             if(len_moves.length == moves.length){
               movimientos += `${len_moves}`
-              setMoves(movimientos.slice(0,-2)); //se le asigna el string de movimientos a la variable abilty
+              setMoves(movimientos); //se le asigna el string de movimientos a la variable abilty
             }
           }else{
             get_mov = ""
             let len_moves = auxMov.split(',');
             len_moves.sort();
+            len_moves[0] = len_moves[len_moves.length -1];
+            len_moves.pop();
              if(len_moves.length == moves.length){
               movimientos += `${len_moves}`;
-              setMoves(movimientos.slice(0,-2)); //se le asigna el string de movimientos a la variable abilty
+              setMoves(movimientos); //se le asigna el string de movimientos a la variable abilty
             }
           }
       });
