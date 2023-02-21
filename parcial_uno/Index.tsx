@@ -4,6 +4,7 @@ import { useEffect, useState} from 'react';
 import { reqApi} from './Import';
 // import Input from './component';
 import Modal from "react-native-modal";
+import { couldStartTrivia } from 'typescript';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -28,6 +29,12 @@ function Index(this: any) {
   const [description, setDescription] = useState("");
   const [homeScreen, setHome] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [evolution1, setEvolution1] = useState("");
+  const [evolution2, setEvolution2] = useState("");
+  const [evolution3, setEvolution3] = useState("");
+  const [evolution1Type, setEvolution1Type] = useState("");
+  const [evolution2Type, setEvolution2Type] = useState("");
+  const [evolution3Type, setEvolution3Type] = useState("");
  
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const [isModalVisible2, setIsModalVisible2] = React.useState(false);
@@ -38,8 +45,8 @@ function Index(this: any) {
 
 
   const waitPlease = async (input_pokemon:string) =>{
-    const pokemon:string = input_pokemon //se consigue el texto del input
-    const pokemon_lowercase:string = pokemon.toLowerCase().trim() //se normaliza el texto para que no cause errores(minusculas)
+  const pokemon:string = input_pokemon //se consigue el texto del input
+  const pokemon_lowercase:string = pokemon.toLowerCase().trim() //se normaliza el texto para que no cause errores(minusculas)
    
     try{
       if(pokemon_lowercase == ""){
@@ -52,6 +59,12 @@ function Index(this: any) {
         setHalfDamageTo("")
         setNoDamageFrom("")
         setNoDamageTo("")
+        setEvolution1("")
+        setEvolution2("")
+        setEvolution3("")
+        setEvolution1Type("")
+        setEvolution2Type("")
+        setEvolution3Type("")
         setType("");
         setMoves("");
         setAbility("");
@@ -59,12 +72,18 @@ function Index(this: any) {
       }else{
         setLoading(true)
         setHome(true)
+        setEvolution1("")
+        setEvolution2("")
+        setEvolution3("")
+        setEvolution1Type("")
+        setEvolution2Type("")
+        setEvolution3Type("")
         const {data}:any = await reqApi.get("pokemon/"+pokemon_lowercase); //se hace la llamada a la api para la info del pokemon
         //const {id} = data
         const {data:data2}:any  = await reqApi.get("pokemon-species/"+pokemon_lowercase); //se hace la llamada a la api para la info del pokemon
         //const {data:data4}:any = await reqApi.get("evolution-chain/"+id);
         const {flavor_text_entries}  = data2
-        const {evolution_chain} = data2;
+        const {evolution_chain:{url}} = data2;
         const get_descripcion = flavor_text_entries.find((element: { language: { name: string; }; }) => element.language.name == "es")
         await sleep(1000);
         setLoading(false);
@@ -77,7 +96,12 @@ function Index(this: any) {
         var habilidades:string = "";
         var tipo:string = "";
         var movimientos:string = "";
-        var evoluciones:string = "";
+        var tipoFirstEvol:string = "";
+        var tipoSecondEvol:string = "";
+        var tipoThirdEvol:string = "";
+        var firstEvol:string = "";
+        var secondEvol:string = "";
+        var thirdEvol:string = "";
         var doubleDamageFromString: string = "";
         var doubleDamageToString: string = "";
         var halfDamageFromString: string = "";
@@ -91,12 +115,14 @@ function Index(this: any) {
             var newurl:any = url.split('v2/').pop()
             const {data:data3} = await reqApi.get(newurl);
             const {names} = data3
+
             const {damage_relations: {double_damage_from}} = data3
             const {damage_relations: {double_damage_to}} = data3
             const {damage_relations: {half_damage_from}} = data3
             const {damage_relations: {half_damage_to}} = data3
             const {damage_relations: {no_damage_from}} = data3
             const {damage_relations: {no_damage_to}} = data3
+            
 
             const get_doubleDamageFromType = double_damage_from.map(({ url }) => url);
             const get_doubleDamageToType = double_damage_to.map(({ url }) => url);
@@ -106,23 +132,23 @@ function Index(this: any) {
             const get_noDamageToType = no_damage_to.map(({ url }) => url);
 
 
-            get_doubleDamageFromType.forEach(async(element: { type: {url: string;};}) =>{
-              const {type:{url}} = element;
-              var newurl:any = url.split('v2/').pop()
+            get_doubleDamageFromType.forEach(async(element) =>{
+              var newurl:any = element.split('v2/').pop()
               const {data:data3} = await reqApi.get(newurl);
               const {names} = data3
               const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
               const {name} = get_type
+
               doubleDamageFromString += `${name}, `
+
               const len_tipo = doubleDamageFromString.split(',')
               if(len_tipo.length-1 == get_doubleDamageFromType.length){
                 setDoubleDamageFrom("Tipos que le hacen 2x de daño: "+doubleDamageFromString.slice(0,-2));//se le asigna el string de tipo a la variable tipo
               }
             })
 
-            get_doubleDamageToType.forEach(async(element: { type: {url: string;};}) =>{
-              const {type:{url}} = element;
-              var newurl:any = url.split('v2/').pop()
+            get_doubleDamageToType.forEach(async(element) =>{
+              var newurl:any = element.split('v2/').pop()
               const {data:data3} = await reqApi.get(newurl);
               const {names} = data3
               const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
@@ -134,9 +160,8 @@ function Index(this: any) {
               }
             })
 
-            get_halfDamageFromType.forEach(async(element: { type: {url: string;};}) =>{
-              const {type:{url}} = element;
-              var newurl:any = url.split('v2/').pop()
+            get_halfDamageFromType.forEach(async(element) =>{
+              var newurl:any = element.split('v2/').pop()
               const {data:data3} = await reqApi.get(newurl);
               const {names} = data3
               const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
@@ -148,9 +173,8 @@ function Index(this: any) {
               }
             })
 
-            get_halfDamageToType.forEach(async(element: { type: {url: string;};}) =>{
-              const {type:{url}} = element;
-              var newurl:any = url.split('v2/').pop()
+            get_halfDamageToType.forEach(async(element) =>{
+              var newurl:any = element.split('v2/').pop()
               const {data:data3} = await reqApi.get(newurl);
               const {names} = data3
               const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
@@ -162,9 +186,8 @@ function Index(this: any) {
               }
             })
 
-            get_noDamageFromType.forEach(async(element: { type: {url: string;};}) =>{
-              const {type:{url}} = element;
-              var newurl:any = url.split('v2/').pop()
+            get_noDamageFromType.forEach(async(element) =>{
+              var newurl:any = element.split('v2/').pop()
               const {data:data3} = await reqApi.get(newurl);
               const {names} = data3
               const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
@@ -176,9 +199,8 @@ function Index(this: any) {
               }
             })
 
-            get_noDamageToType.forEach(async(element: { type: {url: string;};}) =>{
-              const {type:{url}} = element;
-              var newurl:any = url.split('v2/').pop()
+            get_noDamageToType.forEach(async(element) =>{
+              var newurl:any = element.split('v2/').pop()
               const {data:data3} = await reqApi.get(newurl);
               const {names} = data3
               const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
@@ -200,27 +222,112 @@ function Index(this: any) {
               setType("Tipo: "+tipo.slice(0,-2));//se le asigna el string de tipo a la variable tipo
             }
         })
-        /*
-        evolution_chain.forEach(async(element: { evolution: { url: string; }; }) =>{
-          const {evolution:{url}} = element;
+        console.log("-----------------------------");
+        //console.log(url);
+        var newurl:any = url.split('v2/').pop()
+        const {data: data4} = await reqApi.get(newurl);
+        // console.log(data4);
+        const {chain: {species: {name: firstEvolution}}} = data4
+        const {chain: {evolves_to: arrayEvolution}} = data4
+        const {chain: {species: {url: firstEvolutionUrl}}} = data4
+        var newurl:any = firstEvolutionUrl.split('v2/pokemon-species/').pop()
+        const {data: data5} = await reqApi.get("pokemon/"+newurl)
+        const {types: typeFirstEvolution} = data5
+        firstEvol = firstEvolution
+        setEvolution1(firstEvol);
 
-          var newurl:any = url.split('v2/').pop()
-          const {data:data3} = await reqApi.get(newurl);
-          //const {data:data4}:any = await reqApi.get("evolution-chain/"+id);
-          //const {names} = data3
-          //const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
+        // console.log(firstEvolution);
+        typeFirstEvolution.forEach(async(element: { type: { url: string; }; }) =>{
+            const {type:{url}} = element;
 
-          const {chain} = data3
-          const test = Object.keys(chain).map((key) => chain[key]);
-          
-          evoluciones += `${test}}, `
-          const len_evoluciones = evoluciones.split(',')
+            var newurl:any = url.split('v2/').pop()
+            const {data:data3} = await reqApi.get(newurl);
+            const {names} = data3
 
-          if(len_evoluciones.length-1 == evolution_chain.length){
-            setEvolutions("Evoluciona a: "+evoluciones.slice(0,-2));//se le asigna el string de tipo a la variable evoluciones
+            const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
+            const {name} = get_type
+            tipoFirstEvol += `${name}, ` 
+            const len_tipo = tipoFirstEvol.split(',')
+
+             if(len_tipo.length-1 == typeFirstEvolution.length){
+               setEvolution1Type("Tipo: "+tipoFirstEvol.slice(0,-2));//se le asigna el string de tipo a la variable tipo
+             }
+
+        })
+        if (arrayEvolution.length != 0){
+          var nombres = []
+          var tipos = []
+          var string_eevee =""
+
+          for (var i = 0; i < arrayEvolution.length; i++){
+              const secondevourl = arrayEvolution[i].species.url;
+              var newurl:any = secondevourl.split('v2/pokemon-species/').pop()
+              const {data: data5} = await reqApi.get("pokemon/"+newurl)
+              const {types: secondEvolution} = data5
+              secondEvol += `${arrayEvolution[i].species.name},  `
+                //setEvolution2("Evoluciona a "+secondEvol.slice(0,-2));//se le asigna el string de tipo a la variable tipo
+
+              secondEvolution.forEach(async(element: { type: { url: string; }; }) =>{
+                const {type:{url}} = element;
+                var newurl:any = url.split('v2/').pop()
+                const {data:data3} = await reqApi.get(newurl);
+                const {names} = data3
+
+                const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
+
+                const {name} = get_type
+                tipoSecondEvol += `${name}, `
+
+                const len_tipo = tipoSecondEvol.split(',')
+                // console.log(tipoSecondEvol);
+                // nombres.push([arrayEvolution[i-1].species.name,name]);
+                // console.log(arrayEvolution.length)
+
+                if(arrayEvolution.length > 1){
+                  string_eevee += `${arrayEvolution[i-1].species.name} (${name}) `
+                  setEvolution2(string_eevee)
+                }else{
+                  setEvolution2("Evoluciona a "+secondEvol.slice(0,-2))
+                  setEvolution2Type("Tipo: "+tipoSecondEvol.slice(0,-2));//se le asigna el string de tipo a la variable tipo
+                }
+                
+
+            })
+
+              for (let index = 0; index < arrayEvolution[0].evolves_to.length; index++) {
+                const thirdevourl = arrayEvolution[index].evolves_to[index].species.url;
+                var newurl:any = thirdevourl.split('v2/pokemon-species/').pop()
+                const {data: data6} = await reqApi.get("pokemon/"+newurl)
+                const {types: thirdEvolution} = data6
+
+                // console.log(arrayEvolution[index].evolves_to[index].species.name)
+                thirdEvol += `Evoluciona a ${arrayEvolution[index].evolves_to[index].species.name}, ` 
+                const len_thirdevol = thirdEvol.split(',')
+
+              // if(len_thirdevol.length-1 == arrayEvolution[index].evolves_to[index].length){
+                setEvolution3("Evoluciona a "+thirdEvol.slice(0,-2));//se le asigna el string de tipo a la variable tipo
+              // }
+                thirdEvolution.forEach(async(element: { type: { url: string; }; }) =>{
+                  const {type:{url}} = element;
+                  var newurl:any = url.split('v2/').pop()
+                  const {data:data3} = await reqApi.get(newurl);
+                  const {names} = data3
+      
+                  const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
+      
+                  const {name} = get_type
+                  tipoThirdEvol += `${name}, ` 
+                  const len_tipo = tipoThirdEvol.split(',')
+                  // console.log(tipoThirdEvol);
+      
+                  //  if(len_tipo.length-1 == thirdEvolution.length){
+                     setEvolution3Type("Tipo: "+tipoThirdEvol.slice(0,-2));//se le asigna el string de tipo a la variable tipo
+                  //  }
+      
+              })
+              }
+            }
           }
-      }); 
-      */
         abilities.forEach( async(element: { ability: { url: string; }; }) => {
             const {ability:{url}} = element;
        
@@ -228,7 +335,6 @@ function Index(this: any) {
             const {data:data3} = await reqApi.get(newurl);
             const {names} = data3
             const get_type = names.find((element: { language: { name: string; }; }) => element.language.name == "es")
-           
             const {name} = get_type
             habilidades += `${name}, `;
             const len_habilidades = habilidades.split(',')
@@ -260,7 +366,7 @@ function Index(this: any) {
               setMoves(movimientos.slice(0,-2)); //se le asigna el string de movimientos a la variable abilty
             }
           }
-      });//se recorre el arreglo de abilites para anexarlas en un string
+      });
 
         setImage(imagen); //se le asigna la imagen a la variable image
         setDescription("Descripcion: "+descripcion)
@@ -313,7 +419,14 @@ return (
 
         <Modal style={styles.modal} isVisible={isModalVisible}>
           <View style={styles.modal_view}>
-            <Text style={{marginBottom:80}}>{evolution}</Text>
+            <ScrollView>
+              <Text style={{marginBottom:1}}>{evolution1}</Text>
+              <Text style={{marginBottom:1}}>{evolution1Type}</Text>
+              <Text style={{marginBottom:1}}>{evolution2}</Text>
+              <Text style={{marginBottom:1}}>{evolution2Type}</Text>
+              <Text style={{marginBottom:1}}>{evolution3}</Text>
+              <Text style={{marginBottom:1}}>{evolution3Type}</Text>
+            </ScrollView>
             <Pressable style= {styles.button} onPress={handleModal}>
               <Text style={styles.text_button}>Cerrar</Text>
             </Pressable>
@@ -334,13 +447,17 @@ return (
         
         <Modal style={styles.modal} isVisible={isModalVisible3}>
           <View style={styles.modal_view}>
-            <Text style={{marginBottom:80}}>{doubleDamageFrom}</Text>
-            <Text style={{marginBottom:80}}>{doubleDamageTo}</Text>
-            <Text style={{marginBottom:80}}>{halfDamageFrom}</Text>
-            <Text style={{marginBottom:80}}>{halfDamageTo}</Text>
-            <Text style={{marginBottom:80}}>{noDamageFrom}</Text>
-            <Text style={{marginBottom:80}}>{noDamageTo}</Text>
-            <Pressable style= {styles.button} onPress={handleModal3}>
+          <ScrollView>
+
+            <Text style={{marginBottom:1}}>{doubleDamageFrom}</Text>
+            <Text style={{marginBottom:1}}>{doubleDamageTo}</Text>
+            <Text style={{marginBottom:1}}>{halfDamageFrom}</Text>
+            <Text style={{marginBottom:1}}>{halfDamageTo}</Text>
+            <Text style={{marginBottom:1}}>{noDamageFrom}</Text>
+            <Text style={{marginBottom:1}}>{noDamageTo}</Text>
+            
+          </ScrollView>
+          <Pressable style= {styles.button} onPress={handleModal3}>
               <Text style={styles.text_button}>Cerrar</Text>
             </Pressable>
           </View>
@@ -379,6 +496,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop:10,
+    marginBottom:10,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 32,
@@ -421,3 +539,4 @@ const styles = StyleSheet.create({
   }
 });
 export default Index
+
