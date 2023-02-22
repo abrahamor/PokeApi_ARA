@@ -438,12 +438,12 @@ return (
           <View style={styles.modal_view}>
           <ScrollView>
 
-            <Text style={{marginBottom:1}}>{doubleDamageFrom}</Text>
-            <Text style={{marginBottom:1}}>{doubleDamageTo}</Text>
-            <Text style={{marginBottom:1}}>{halfDamageFrom}</Text>
-            <Text style={{marginBottom:1}}>{halfDamageTo}</Text>
-            <Text style={{marginBottom:1}}>{noDamageFrom}</Text>
-            <Text style={{marginBottom:1}}>{noDamageTo}</Text>
+            <Text style={doubleDamageFrom ? {marginBottom:1}:{marginBottom:1,display:'none'}}>{doubleDamageFrom}</Text>
+            <Text style={doubleDamageTo ? {marginBottom:1}:{marginBottom:1,display:'none'}}>{doubleDamageTo}</Text>
+            <Text style={halfDamageFrom ? {marginBottom:1}:{marginBottom:1,display:'none'}}>{halfDamageFrom}</Text>
+            <Text style={halfDamageTo ? {marginBottom:1}:{marginBottom:1,display:'none'}}>{halfDamageTo}</Text>
+            <Text style={noDamageFrom ? {marginBottom:1}:{marginBottom:1,display:'none'}}>{noDamageFrom}</Text>
+            <Text style={noDamageTo ? {marginBottom:1}:{marginBottom:1,display:'none'}}>{noDamageTo}</Text>
             
           </ScrollView>
           <Pressable style= {styles.button} onPress={handleModal3}>
